@@ -16,36 +16,18 @@ code {
 
 .container {
   display: grid;
+  justify-content: center;
+  align-items: center;
   grid-template-columns: 1fr 1fr 1fr;
 }
-.card {
-  padding: 5px;
-  margin-top: 50px;
-  margin-bottom: 50px;
-  width: 200px;
-  height: 350px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
+.bgColor {
+  background-color: rgb(226, 230, 227);
 }
 
-.card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+.btn-color {
+  background-color: rgb(75, 85, 72);
 }
 
-.wrapper {
-  padding: 2px 16px;
-}
-.image {
-  width: 100%;
-  height: 200px;
-  object-fit: contain;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-}
-
-button:hover {
-  background-color: rgb(140, 180, 125);
+.header-bg-color {
+  background-color: #f5f5f4;
 }

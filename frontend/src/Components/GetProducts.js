@@ -1,13 +1,14 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { useQuery, gql } from "@apollo/client";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { LOAD_PRODUCTS } from "../Graphql/Queries";
-import { Card } from "antd";
-
-const { Meta } = Card;
+import { Grid, useMediaQuery } from "@chakra-ui/react";
+import ProductCard from "./ProductCard";
+import LoadingSkeleton from "./LoadingSkeleton";
 
 const GetProducts = () => {
   const { error, loading, data } = useQuery(LOAD_PRODUCTS);
   const [products, setProducts] = useState([]);
+  const [isLargerThan768] = useMediaQuery("(min-width:768px)");
 
   useEffect(() => {
     if (data) {
@@ -15,23 +16,19 @@ const GetProducts = () => {
     }
   }, [data]);
   return (
-    <Stack>
-      {!loading &&
+    <Grid
+      templateColumns={isLargerThan768 ? "repeat(3, 1fr)" : "repeat(2, 1fr)"}
+      gap={4}
+      p="5"
+    >
+      {loading ? (
+        <LoadingSkeleton />
+      ) : (
         products.map((product) => (
-          <div class="card">
-            <div>
-              <img src={product.image_url} alt="Avatar" className="image" />
-            </div>
-            <div class="card-container text-center">
-              <h4>
-                <b>Jane Doe</b>
-              </h4>
-              <p>Interior Designer</p>
-              <button>Add to Cart</button>{" "}
-            </div>
-          </div>
-        ))}
-    </Stack>
+          <ProductCard key={product.title} product={product} />
+        ))
+      )}
+    </Grid>
   );
 };
 

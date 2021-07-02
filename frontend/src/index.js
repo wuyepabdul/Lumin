@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { ChakraProvider } from "@chakra-ui/react";
 import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
 import {
   ApolloClient,
   InMemoryCache,
@@ -13,6 +14,7 @@ import {
 } from "@apollo/client";
 
 import { onError } from "@apollo/client/link/error";
+import store from "./redux/store";
 
 const errorLink = onError(({ graphqlErrors, networkError }) => {
   if (graphqlErrors) {
@@ -36,7 +38,9 @@ ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider>
       <ApolloProvider client={client}>
-        <App />
+        <Provider store={store}>
+          <App />
+        </Provider>
       </ApolloProvider>
     </ChakraProvider>
   </React.StrictMode>,
