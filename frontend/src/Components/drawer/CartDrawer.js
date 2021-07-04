@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
 import { useDispatch, useSelector } from "react-redux";
 import CounterInput from "react-counter-input";
-import { CloseIcon } from "@chakra-ui/icons";
-
 import {
   Drawer,
   DrawerBody,
@@ -15,53 +14,73 @@ import {
   Spacer,
   Stack,
   VStack,
-  HStack,
   Text,
+  Flex,
   Image,
   Box,
   Center,
-  Select,
   useMediaQuery,
-  FormControl,
-  FormLabel,
   useDisclosure,
   Alert,
   CloseButton,
-  useConst,
 } from "@chakra-ui/react";
 import {
   addToCartAction,
   removeFromCartAction,
 } from "../../redux/actions/cartActions";
+import { LOAD_CURRENCY } from "../../Graphql/Queries";
+import lodash from "lodash";
 
 const CartDrawer = ({ product }) => {
+  const { data } = useQuery(LOAD_CURRENCY);
   const [isLargerThan768] = useMediaQuery("(min-width:768px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
 
   const dispatch = useDispatch();
-  const [qty, setQty] = useState(1);
+  const [currencyList, setCurrencyList] = useState([]);
+
   const cartItems = useSelector((state) => state.cartItems);
-  const currencies = [
-    "USD",
-    "AED",
-    "AFN",
-    "ALL",
-    "AMD",
-    "ANG",
-    "AOA",
-    "ARS",
-    "AUD",
-    "AWG",
-    "AZN",
-    "BAM",
-    "BBD",
-    "BDT",
-    "BGN",
-  ];
+
+  useEffect(() => {
+    if (data !== "undefined") {
+      createListOfCurrencies();
+    }
+    // eslint-disable-next-line
+  }, [data]);
+
+  const createListOfCurrencies = () => {
+    let listOfCurrencies = [];
+
+    if (data) {
+      data.__type.currencies.forEach((currency) => {
+        let combinedString = "";
+        for (let item in currency) {
+          combinedString += currency[item] + "";
+        }
+        listOfCurrencies.push(combinedString.slice(11, 14));
+      });
+    }
+
+    setCurrencyList(listOfCurrencies);
+  };
 
   const handleCurrencyChange = (e) => {
     console.log(e.target.value);
+  };
+
+  const handleAddToCart = () => {
+    let cartItems = [];
+    if (typeof window !== "undefined") {
+      if (localStorage.getItem("cartItems")) {
+        cartItems = JSON.parse(localStorage.getItem("cartItems"));
+      }
+      cartItems.push({ ...product, qty: 1 });
+
+      let uniqueItem = lodash.uniqWith(cartItems, lodash.isEqual);
+
+      dispatch(addToCartAction(uniqueItem));
+    }
   };
 
   const handleQuantityChange = (productId, quantity) => {
@@ -70,13 +89,11 @@ const CartDrawer = ({ product }) => {
       if (localStorage.getItem("cartItems")) {
         cartItems = JSON.parse(localStorage.getItem("cartItems"));
       }
-
-      cartItems.map((item, index) => {
+      cartItems.forEach((item, index) => {
         if (item.id === productId) {
           cartItems[index].qty = quantity;
         }
       });
-
       dispatch(addToCartAction(cartItems));
     }
   };
@@ -87,7 +104,10 @@ const CartDrawer = ({ product }) => {
   return (
     <>
       <Button
-        onClick={onOpen}
+        onClick={() => {
+          onOpen();
+          handleAddToCart();
+        }}
         my="3"
         colorScheme="teal"
         width={isLargerThan768 ? "200px" : "100%"}
@@ -128,7 +148,7 @@ const CartDrawer = ({ product }) => {
               style={{ width: "100px" }}
               onChange={handleCurrencyChange}
             >
-              {currencies.map((currency) => (
+              {currencyList.map((currency) => (
                 <option key={currency} value={currency}>
                   {currency}{" "}
                 </option>
@@ -150,17 +170,20 @@ const CartDrawer = ({ product }) => {
                       </Box>
                       <Box border="1px" width="40" fontSize="sm">
                         <CounterInput
+                          count={1}
                           min={0}
                           max={10}
                           onCountChange={(count) =>
-                            handleQuantityChange(item.id, count)
+                            count === 0
+                              ? handleRemoveCartItem(item.id)
+                              : handleQuantityChange(item.id, count)
                           }
                           border="1px"
                         />
                       </Box>
                     </VStack>
                     <Spacer />
-                    <Box mt="12">NGN {item.price}</Box>
+                    <Box mt="12">NGN {item.price * item.qty}</Box>
                     <Spacer />
                     <Box p="7">
                       <Image
@@ -176,15 +199,26 @@ const CartDrawer = ({ product }) => {
                       position="absolute"
                       right="8px"
                       top="8px"
-                      position="absolute"
-                      right="8px"
-                      top="8px"
                     />
                   </Alert>
                 </Stack>
               ))
             )}
           </DrawerBody>
+          <Flex>
+            {" "}
+            <Text> </Text>
+            <Text></Text>
+            <Box p="4">Subtotal</Box>
+            <Spacer />
+            <Box p="4">
+              {cartItems.reduce(
+                (prevItem, nextItem) =>
+                  prevItem + nextItem.qty * nextItem.price,
+                0
+              )}{" "}
+            </Box>
+          </Flex>
 
           <DrawerFooter>
             <Button

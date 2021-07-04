@@ -15,8 +15,8 @@ import {
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import logo from "../lumin.png";
 import shoppingCart from "../shoppinCart.png";
-import { Badge, Space, Switch } from "antd";
 import { useSelector } from "react-redux";
+
 const Links = ["Shop", "Help", "Blog"];
 const Options = [
   "Filter By",
@@ -100,7 +100,7 @@ export default function Header() {
               {" "}
               <HStack>
                 <Image src={shoppingCart} boxSize="50px" objectFit="contain" />
-                <Badge>{cartItems.length !== 0 && cartItems.length}</Badge>
+                <sup>{cartItems.length !== 0 && cartItems.length} </sup>
               </HStack>
             </NavLink>
             <Box>

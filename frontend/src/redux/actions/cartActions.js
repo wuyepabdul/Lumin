@@ -13,20 +13,12 @@ export const addToCartAction = (product) => async (dispatch, getState) => {
   }
 };
 
-/* export const removeItemFromCartAction =(productId) =>(dispatch,getState)=>{
-try {
-  
-} catch (error) {
-  
-}
-} */
-
 export const removeFromCartAction =
   (productId) => async (dispatch, getState) => {
     try {
       const cartItems = getState().cartItems;
-      console.log(typeof cartItems);
       const filteredItems = cartItems.filter((item) => item.id !== productId);
+
       dispatch({ type: REMOVE_FROM_CART, payload: filteredItems });
       localStorage.setItem("cartItems", JSON.stringify(filteredItems));
     } catch (error) {

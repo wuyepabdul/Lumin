@@ -6,7 +6,7 @@ import ProductCard from "./ProductCard";
 import LoadingSkeleton from "./LoadingSkeleton";
 
 const GetProducts = () => {
-  const { error, loading, data } = useQuery(LOAD_PRODUCTS);
+  const { loading, data } = useQuery(LOAD_PRODUCTS);
   const [products, setProducts] = useState([]);
   const [isLargerThan768] = useMediaQuery("(min-width:768px)");
 

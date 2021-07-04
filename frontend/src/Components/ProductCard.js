@@ -1,5 +1,4 @@
 import { Box, Image, Center, Text } from "@chakra-ui/react";
-import AddToCart from "./AddToCart";
 import CartDrawer from "./drawer/CartDrawer";
 
 const ProductCard = ({ product }) => {
@@ -31,7 +30,7 @@ const ProductCard = ({ product }) => {
         </Box>
       </Center>
       <Center>
-        <AddToCart product={product} />
+        <CartDrawer product={product} />
       </Center>
     </Box>
   );
