@@ -26,10 +26,10 @@ import {
 } from "@chakra-ui/react";
 import {
   addToCartAction,
+  changeQuantityAction,
   removeFromCartAction,
 } from "../../redux/actions/cartActions";
 import { LOAD_CURRENCY } from "../../Graphql/Queries";
-import lodash from "lodash";
 
 const CartDrawer = ({ product }) => {
   const { data } = useQuery(LOAD_CURRENCY);
@@ -40,7 +40,7 @@ const CartDrawer = ({ product }) => {
   const dispatch = useDispatch();
   const [currencyList, setCurrencyList] = useState([]);
 
-  const cartItems = useSelector((state) => state.cartItems);
+  const cartItems = useSelector((state) => state.cart.cartItems);
 
   useEffect(() => {
     if (data !== "undefined") {
@@ -70,36 +70,23 @@ const CartDrawer = ({ product }) => {
   };
 
   const handleAddToCart = () => {
-    let cartItems = [];
-    if (typeof window !== "undefined") {
-      if (localStorage.getItem("cartItems")) {
-        cartItems = JSON.parse(localStorage.getItem("cartItems"));
-      }
-      cartItems.push({ ...product, qty: 1 });
-
-      let uniqueItem = lodash.uniqWith(cartItems, lodash.isEqual);
-
-      dispatch(addToCartAction(uniqueItem));
-    }
+    console.log(product);
+    const item = {
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image_url: product.image_url,
+      qty: 1,
+    };
+    dispatch(addToCartAction(item));
   };
 
-  const handleQuantityChange = (productId, quantity) => {
-    let cartItems = [];
-    if (typeof window !== "undefined") {
-      if (localStorage.getItem("cartItems")) {
-        cartItems = JSON.parse(localStorage.getItem("cartItems"));
-      }
-      cartItems.forEach((item, index) => {
-        if (item.id === productId) {
-          cartItems[index].qty = quantity;
-        }
-      });
-      dispatch(addToCartAction(cartItems));
-    }
+  const handleQuantityChange = (item, quantity) => {
+    dispatch(changeQuantityAction(item, quantity));
   };
 
-  const handleRemoveCartItem = (productId) => {
-    dispatch(removeFromCartAction(productId));
+  const handleRemoveCartItem = (item) => {
+    dispatch(removeFromCartAction(item));
   };
   return (
     <>
@@ -170,13 +157,13 @@ const CartDrawer = ({ product }) => {
                       </Box>
                       <Box border="1px" width="40" fontSize="sm">
                         <CounterInput
-                          count={1}
+                          count={item.qty}
                           min={0}
                           max={10}
                           onCountChange={(count) =>
                             count === 0
-                              ? handleRemoveCartItem(item.id)
-                              : handleQuantityChange(item.id, count)
+                              ? handleRemoveCartItem(item)
+                              : handleQuantityChange(item, count)
                           }
                           border="1px"
                         />
@@ -195,7 +182,7 @@ const CartDrawer = ({ product }) => {
                     </Box>
 
                     <CloseButton
-                      onClick={() => handleRemoveCartItem(item.id)}
+                      onClick={() => handleRemoveCartItem(item)}
                       position="absolute"
                       right="8px"
                       top="8px"

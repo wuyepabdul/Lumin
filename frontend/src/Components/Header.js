@@ -60,7 +60,7 @@ const NavLink = ({ children }) => (
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const cartItems = useSelector((state) => state.cartItems);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   return (
     <Box pt="2" bg="#f5f5f4" alignItems="stretch">
       <Box px="10">

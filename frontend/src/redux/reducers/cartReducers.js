@@ -1,12 +1,27 @@
-import { ADD_TO_CART, REMOVE_FROM_CART } from "../constants/cartConstants";
+import {
+  ADD_TO_CART,
+  DECREASE_QUANTITY,
+  GET_TOTALS,
+  INCREASE_QUANTITY,
+  REMOVE_FROM_CART,
+} from "../constants/cartConstants";
 
-export const cartReducer = (state = [], action) => {
+export const cartReducer = (state = { cartItems: [] }, action) => {
   switch (action.type) {
     case ADD_TO_CART:
-      return action.payload;
+      return { cartItems: action.payload.cartItems };
 
     case REMOVE_FROM_CART:
-      return action.payload;
+      return { cartItems: action.payload.cartItems };
+
+    case INCREASE_QUANTITY:
+      return { cartItems: action.payload.cartItems };
+
+    case DECREASE_QUANTITY:
+      return { cartItems: action.payload.cartItems };
+
+    case GET_TOTALS:
+      return { cartItems: action.payload.cartItems };
 
     default:
       return state;

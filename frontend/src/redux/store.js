@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { cartReducer } from "./reducers/cartReducers";
 
 const reducers = combineReducers({
-  cartItems: cartReducer,
+  cart: cartReducer,
 });
 
 const cartItemsFromLocalStorage = localStorage.getItem("cartItems")
@@ -12,7 +12,7 @@ const cartItemsFromLocalStorage = localStorage.getItem("cartItems")
   : [];
 
 const initialState = {
-  cartItems: cartItemsFromLocalStorage,
+  cart: { cartItems: cartItemsFromLocalStorage },
 };
 
 const middlewares = [thunk];
