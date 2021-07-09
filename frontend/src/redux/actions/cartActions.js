@@ -1,8 +1,11 @@
 import {
   ADD_TO_CART,
+  CHANGE_CURRENCY,
   CHANGE_QUANTITY,
   REMOVE_FROM_CART,
 } from "../constants/cartConstants";
+import exchangeratesapi from "@ittkm/exchangeratesapi";
+const API_KEY = "48d85dfc7b2cf4187a693c3377f52b71";
 
 export const addToCartAction = (product) => async (dispatch, getState) => {
   try {
@@ -57,6 +60,34 @@ export const changeQuantityAction =
       dispatch({ type: CHANGE_QUANTITY, payload: { cartItems } });
       dispatch({ type: ADD_TO_CART, payload: { cartItems } });
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+export const changeCurrencyAction =
+  (toCurrency) => async (dispatch, getState) => {
+    try {
+      const api = new exchangeratesapi(API_KEY);
+      const cartItems = getState().cart.cartItems.slice();
+
+      cartItems.forEach((item) => {
+        const convertParameters = {
+          base: "NGN",
+          from: "NGN",
+          to: `${toCurrency}`,
+          amount: item.price,
+        };
+
+        api.convert(convertParameters).then((response) => {
+          console.log("response", response);
+          item.convertedPrice = response.result;
+          item.convertedCurrency = response.query.to;
+          dispatch({ type: ADD_TO_CART, payload: { cartItems } });
+          dispatch({ type: CHANGE_CURRENCY, payload: { cartItems } });
+          localStorage.setItem("cartItems", JSON.stringify(cartItems));
+        });
+      });
     } catch (error) {
       console.log(error.message);
     }

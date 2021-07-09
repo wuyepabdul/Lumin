@@ -26,34 +26,33 @@ import {
 } from "@chakra-ui/react";
 import {
   addToCartAction,
+  changeCurrencyAction,
   changeQuantityAction,
   removeFromCartAction,
 } from "../../redux/actions/cartActions";
 import { LOAD_CURRENCY } from "../../Graphql/Queries";
 
-const CartDrawer = ({ product }) => {
-  const { data } = useQuery(LOAD_CURRENCY);
+const CartDrawer = ({ product, rates }) => {
+  const { data: currencyData } = useQuery(LOAD_CURRENCY);
   const [isLargerThan768] = useMediaQuery("(min-width:768px)");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const firstField = React.useRef();
-
   const dispatch = useDispatch();
   const [currencyList, setCurrencyList] = useState([]);
-
   const cartItems = useSelector((state) => state.cart.cartItems);
 
   useEffect(() => {
-    if (data !== "undefined") {
+    if (currencyData !== null) {
       createListOfCurrencies();
     }
     // eslint-disable-next-line
-  }, [data]);
+  }, [currencyData]);
 
   const createListOfCurrencies = () => {
     let listOfCurrencies = [];
 
-    if (data) {
-      data.__type.currencies.forEach((currency) => {
+    if (currencyData) {
+      currencyData.__type.currencies.forEach((currency) => {
         let combinedString = "";
         for (let item in currency) {
           combinedString += currency[item] + "";
@@ -66,17 +65,19 @@ const CartDrawer = ({ product }) => {
   };
 
   const handleCurrencyChange = (e) => {
-    console.log(e.target.value);
+    dispatch(changeCurrencyAction(e.target.value));
   };
 
   const handleAddToCart = () => {
-    console.log(product);
     const item = {
       id: product.id,
       title: product.title,
       price: product.price,
+      convertedPrice: product.price,
       image_url: product.image_url,
       qty: 1,
+      currency: "NGN",
+      convertedCurrency: "NGN",
     };
     dispatch(addToCartAction(item));
   };
@@ -170,7 +171,13 @@ const CartDrawer = ({ product }) => {
                       </Box>
                     </VStack>
                     <Spacer />
-                    <Box mt="12">NGN {item.price * item.qty}</Box>
+                    <Box mt="12">
+                      {item.convertedCurrency}{" "}
+                      {(item.convertedPrice * item.qty)
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </Box>
                     <Spacer />
                     <Box p="7">
                       <Image
@@ -199,11 +206,16 @@ const CartDrawer = ({ product }) => {
             <Box p="4">Subtotal</Box>
             <Spacer />
             <Box p="4">
-              {cartItems.reduce(
-                (prevItem, nextItem) =>
-                  prevItem + nextItem.qty * nextItem.price,
-                0
-              )}{" "}
+              {cartItems.length && cartItems[0].convertedCurrency}{" "}
+              {cartItems
+                .reduce(
+                  (prevItem, nextItem) =>
+                    prevItem + nextItem.qty * nextItem.convertedPrice,
+                  0
+                )
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
             </Box>
           </Flex>
 

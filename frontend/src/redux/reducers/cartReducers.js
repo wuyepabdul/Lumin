@@ -1,5 +1,6 @@
 import {
   ADD_TO_CART,
+  CHANGE_CURRENCY,
   DECREASE_QUANTITY,
   GET_TOTALS,
   INCREASE_QUANTITY,
@@ -21,6 +22,9 @@ export const cartReducer = (state = { cartItems: [] }, action) => {
       return { cartItems: action.payload.cartItems };
 
     case GET_TOTALS:
+      return { cartItems: action.payload.cartItems };
+
+    case CHANGE_CURRENCY:
       return { cartItems: action.payload.cartItems };
 
     default:

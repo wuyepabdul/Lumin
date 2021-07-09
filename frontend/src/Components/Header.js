@@ -13,8 +13,8 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import logo from "../lumin.png";
-import shoppingCart from "../shoppinCart.png";
+import logo from "../../src/images/lumin.png";
+import shoppingCart from "../../src/images/shoppinCart.png";
 import { useSelector } from "react-redux";
 
 const Links = ["Shop", "Help", "Blog"];
@@ -136,8 +136,8 @@ export default function Header() {
       <Box px="10" py="15" my="20">
         <HStack spacing={8} alignItems="stretch" py="5">
           <Box>
-            <Text> All Products</Text>
-            <Text> A 360 look at Lumin</Text>
+            <Text fontSize="40px"> All Products</Text>
+            <Text> A 360&deg; look at Lumin</Text>
           </Box>
           <Spacer />
           <Box>
