@@ -26,7 +26,7 @@ const errorLink = onError(({ graphqlErrors }) => {
 
 const link = from([
   errorLink,
-  new HttpLink({ uri: "https://pangaea-interviews.now.sh/api/graphql" }),
+  new HttpLink({ uri: process.env.REACT_APP_GRAPHQL_API }),
 ]);
 
 const client = new ApolloClient({
