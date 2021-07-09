@@ -1,9 +1,12 @@
 import React from "react";
+import { useQuery } from "@apollo/client";
+import { LOAD_PRODUCTS } from "../Graphql/Queries";
 import { Grid, useMediaQuery } from "@chakra-ui/react";
 import ProductCard from "./ProductCard";
-import LoadingSkeleton from "./LoadingSkeleton";
+import LoadingCard from "./LoadingSkeleton";
 
-const GetProducts = ({ rates, currencyList, products, loading }) => {
+const GetProducts = ({ rates, currencyList, products }) => {
+  const { loading } = useQuery(LOAD_PRODUCTS);
   const [isLargerThan768] = useMediaQuery("(min-width:768px)");
 
   return (
@@ -13,7 +16,7 @@ const GetProducts = ({ rates, currencyList, products, loading }) => {
       p="5"
     >
       {loading ? (
-        <LoadingSkeleton />
+        <LoadingCard />
       ) : (
         products.map((product) => (
           <ProductCard

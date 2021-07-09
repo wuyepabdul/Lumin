@@ -5,7 +5,8 @@ import {
   REMOVE_FROM_CART,
 } from "../constants/cartConstants";
 import exchangeratesapi from "@ittkm/exchangeratesapi";
-const API_KEY = "48d85dfc7b2cf4187a693c3377f52b71";
+
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 export const addToCartAction = (product) => async (dispatch, getState) => {
   try {

@@ -1,5 +1,0 @@
-.mode csv
-.import data.txt famtech
-.table
-.schema
-SELECT DISTINCT phoneNum FROM famtech WHERE famtech.httpget NOT LIKE '%MMSRETRIEVE%';
